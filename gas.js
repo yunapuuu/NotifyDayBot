@@ -29,7 +29,7 @@ function notify(){
   let nameList = GetBirthdayNameList(notificationSheet, today);
 
   //送信
-  if(nameList.length === EMPTY){
+  if(nameList.length !== EMPTY){
     nameList.forEach(function(name){
       sendMessage(discordWebHookURL, name);
     })
