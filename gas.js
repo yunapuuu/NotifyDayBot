@@ -2,34 +2,32 @@
 const SHEET = SpreadsheetApp.getActiveSpreadsheet();
 
 /** @string シート情報管理シート名 */
-const SHEET_INFO_MANAGEMENT_NAME = "sheetInfo";
+const SHEET_INFO_MANAGEMENT_NAME = SHEET.getSheetByName("sheetInfo");
 /** @string 通知管理シート名 */
 const SHEET_MASTER = SHEET.getSheetByName("master");
 
-// discord側で作成したボットのウェブフックURL
-const discordWebHookURL = "自身のDISCORD BOTのURLに書き換える";
-
-const EMPTY = 0;
+/** @int 無効値 */
+const INVALID = 0;
 
 /**
  * 通知する
  */
 function notify(){
+  // discord側で作成したボットのウェブフックURL
+  const discordWebHookURL = SHEET_INFO_MANAGEMENT_NAME.getRange("B4").getValue();
+
   //通知種類を取得
   let notificationType = SHEET_MASTER.getRange("A2").getValue();
 
   //通知種類に紐づくシートを取ってくる
   let notificationSheet = SHEET.getSheetByName(GetNotificationSheetType(notificationType));
-
-  //今日の日付を取得 時刻を0時にする 日付比較の際は経過ミリ秒数で比較する
-  // const today = new Date().setHours(0,0,0,0).getTime();
   const today = new Date();
 
-  //該当するリストを
+  //該当するリストを取得
   let nameList = GetBirthdayNameList(notificationSheet, today);
-
+  
   //送信
-  if(nameList.length !== EMPTY){
+  if(nameList.length !== INVALID){
     nameList.forEach(function(name){
       sendMessage(discordWebHookURL, name);
     })
